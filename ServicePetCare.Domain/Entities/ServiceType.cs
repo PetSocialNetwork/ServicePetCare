@@ -5,7 +5,7 @@ namespace ServicePetCare.Domain.Entities
     public class ServiceType : IEntity
     {
         public Guid Id { get; init; }
-        public string Name { get; }
+        public string Name { get; init;  }
         protected ServiceType() { }
     }
 }

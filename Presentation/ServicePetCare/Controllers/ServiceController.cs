@@ -103,7 +103,7 @@ namespace ServicePetCare.WebApi.Controllers
         /// Возвращает все типы услуг
         /// </summary>
         /// <param name="cancellationToken">Токен отмены</param>
-        [HttpPost("[action]")]
+        [HttpGet("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         public async Task<List<ServiceTypeResponse>> GetServiceTypesAsync
