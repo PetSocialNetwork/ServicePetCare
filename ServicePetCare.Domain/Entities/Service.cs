@@ -6,8 +6,10 @@ namespace ServicePetCare.Domain.Entities
     {
         public Guid Id { get; init; }
         public Guid ProfileId { get; init; }
-        public Guid ServiceTypeId { get; set; } // Храним только ID
+        public Guid ServiceTypeId { get; set; }
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
         public ServiceType ServiceType { get; set; }
-        protected Service() { }
+        public DogWalking DogWalkingService { get; set; }
     }
 }

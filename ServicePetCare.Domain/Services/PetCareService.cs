@@ -1,4 +1,5 @@
 ﻿using ServicePetCare.Domain.Entities;
+using ServicePetCare.Domain.Enums;
 using ServicePetCare.Domain.Exceptions;
 using ServicePetCare.Domain.Interfaces;
 
@@ -7,34 +8,50 @@ namespace ServicePetCare.Domain.Services
     public class PetCareService
     {
         private readonly IServiceRepository _serviceRepository;
-        private readonly IServiceTypeRepository _serviceTypeRepository;
+        private readonly IDogWalkingServiceRepository _dogWalkingServiceRepository;
         public PetCareService(IServiceRepository serviceRepository,
-            IServiceTypeRepository serviceTypeRepository)
+            IDogWalkingServiceRepository dogWalkingServiceRepository)
         {
             _serviceRepository = serviceRepository
                 ?? throw new ArgumentException(nameof(serviceRepository));
-            _serviceTypeRepository = serviceTypeRepository
-                ?? throw new ArgumentException(nameof(serviceTypeRepository));
+            _dogWalkingServiceRepository = dogWalkingServiceRepository
+                ?? throw new ArgumentException(nameof(dogWalkingServiceRepository));
         }
 
         public async Task<Service> AddServiceAsync
             (Service service, CancellationToken cancellationToken)
         {
+            var isExistsService = await _serviceRepository
+                .CheckServiceExistsAsync(service.ServiceTypeId, service.ProfileId, cancellationToken);
+
+            if (isExistsService)
+            {
+                throw new ServiceAlreadyExistsException("Нельзя добавить уже существующую услугу");
+            }
+
             await _serviceRepository.Add(service, cancellationToken);
+
+            switch (service.ServiceTypeId)
+            {
+                case var id when id == ServiceTypes.DogWalking:
+                    var dogService = new DogWalking(Guid.NewGuid(), service.Id);
+                    await _dogWalkingServiceRepository.Add(dogService, cancellationToken);
+                    break;
+            }
+
             return service;
         }
 
-        public async Task<Service> GetServiceByIdAsync
-            (Guid id, CancellationToken cancellationToken)
+        public async Task UpdateServiceAsync
+            (Guid id, string? description, decimal? price, CancellationToken cancellationToken)
         {
-            try
-            {
-                return await _serviceRepository.GetById(id, cancellationToken);
-            }
-            catch (InvalidOperationException)
-            {
-                throw new ServiceNotFoundException("Услуги не существует.");
-            }
+            var service = await _serviceRepository.FindServiceAsync(id, cancellationToken)
+                ?? throw new ServiceNotFoundException("Услуги не существует.");
+
+            service.Description = description;
+            service.Price = price;
+
+            await _serviceRepository.Update(service, cancellationToken);
         }
 
         public async Task DeleteServiceAsync
@@ -45,23 +62,16 @@ namespace ServicePetCare.Domain.Services
 
             await _serviceRepository.Delete(service, cancellationToken);
         }
+        public async Task<Service> GetServiceByIdAsync
+         (Guid serviceId, CancellationToken cancellationToken)
+        {
+            return await _serviceRepository.GetServiceByIdAsync(serviceId, cancellationToken);
+        }
 
         public async Task<List<Service>> GetServiceByProfileIdAsync
             (Guid userId, CancellationToken cancellationToken)
         {
             return await _serviceRepository.GetServicesByProfileIdAsync(userId, cancellationToken);
-        }
-
-        public async Task<ServiceType> GetServiceTypeByIdAsync
-          (Guid id, CancellationToken cancellationToken)
-        {
-            return await _serviceTypeRepository.GetById(id, cancellationToken);
-        }
-
-        public async Task<List<ServiceType>> GetServiceTypesAsync
-            (CancellationToken cancellationToken)
-        {
-            return await _serviceTypeRepository.GetAll(cancellationToken);
         }
     }
 }

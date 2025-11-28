@@ -39,19 +39,18 @@ namespace ServicePetCare.WebApi.Controllers
         }
 
         /// <summary>
-        /// Возвращает услугу по ее идентификатору
+        /// Добавляет услугу для пользователя
         /// </summary>
-        /// <param name="id">Идентификатор услуги</param>
+        /// <param name="request">Модель запроса</param>
         /// <param name="cancellationToken">Токен отмены</param>
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
         [ProducesResponseType(500)]
-        public async Task<ServiceResponse> GetServiceByIdAsync
-            ([FromQuery] Guid id, CancellationToken cancellationToken)
+        public async Task UpdateServiceAsync
+            ([FromBody] UpdateServiceRequest request, CancellationToken cancellationToken)
         {
-            var petProfile = await _petCareService.GetServiceByIdAsync(id, cancellationToken);
-            return _mapper.Map<ServiceResponse>(petProfile);
+            await _petCareService.UpdateServiceAsync
+                (request.Id, request.Description, request.Price, cancellationToken);
         }
 
         /// <summary>
@@ -69,6 +68,21 @@ namespace ServicePetCare.WebApi.Controllers
         }
 
         /// <summary>
+        /// Возвращает услуги по идентификатору 
+        /// </summary>
+        /// <param name="serviceId">Идентификатор услуги</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpGet("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<ServiceResponse> GetServiceByIdAsync
+            ([FromQuery] Guid serviceId, CancellationToken cancellationToken)
+        {
+            var service = await _petCareService.GetServiceByIdAsync(serviceId, cancellationToken);
+            return _mapper.Map<ServiceResponse>(service);
+        }
+
+        /// <summary>
         /// Возвращает все услуги по идентификатору пользователя
         /// </summary>
         /// <param name="profileId">Идентификатор профиля пользователя</param>
@@ -79,38 +93,8 @@ namespace ServicePetCare.WebApi.Controllers
         public async Task<List<ServiceResponse>> GetServiceByProfileIdAsync
             ([FromBody] Guid profileId, CancellationToken cancellationToken)
         {
-            var petProfiles = await _petCareService.GetServiceByProfileIdAsync(profileId, cancellationToken);
-            return _mapper.Map<List<ServiceResponse>>(petProfiles);
-        }
-
-        /// <summary>
-        /// Возвращает тип услуги по ее идентификатору
-        /// </summary>
-        /// <param name="id">Идентификатор типа услуги</param>
-        /// <param name="cancellationToken">Токен отмены</param>
-        [HttpGet("[action]")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
-        public async Task<ServiceTypeResponse> GetServiceTypeByIdAsync
-            ([FromQuery] Guid id, CancellationToken cancellationToken)
-        {
-            var petProfile = await _petCareService.GetServiceTypeByIdAsync(id, cancellationToken);
-            return _mapper.Map<ServiceTypeResponse>(petProfile);
-        }
-
-        /// <summary>
-        /// Возвращает все типы услуг
-        /// </summary>
-        /// <param name="cancellationToken">Токен отмены</param>
-        [HttpGet("[action]")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        public async Task<List<ServiceTypeResponse>> GetServiceTypesAsync
-            (CancellationToken cancellationToken)
-        {
-            var petProfiles = await _petCareService.GetServiceTypesAsync(cancellationToken);
-            return _mapper.Map<List<ServiceTypeResponse>>(petProfiles);
+            var services = await _petCareService.GetServiceByProfileIdAsync(profileId, cancellationToken);
+            return _mapper.Map<List<ServiceResponse>>(services);
         }
     }
 }

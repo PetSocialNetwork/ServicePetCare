@@ -15,7 +15,22 @@ namespace ServicePetCare.DataEntityFramework.Repositories
 
         public async Task<List<Service>> GetServicesByProfileIdAsync(Guid profileId, CancellationToken cancellationToken)
         {
-            return await Entities.Where(p => p.ProfileId == profileId).ToListAsync(cancellationToken);
+            return await Entities.Where(p => p.ProfileId == profileId)
+                .Include(s => s.ServiceType)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<Service> GetServiceByIdAsync(Guid serviceId, CancellationToken cancellationToken)
+        {
+            return await Entities.Where(p => p.Id == serviceId)
+                .Include(s => s.ServiceType)
+                .SingleAsync();
+        }
+
+        public async Task<bool> CheckServiceExistsAsync(Guid serviceTypeId, Guid profileId, CancellationToken cancellationToken)
+        {
+            return await Entities
+                .AnyAsync(p => p.ServiceTypeId == serviceTypeId && p.ProfileId == profileId, cancellationToken);
         }
     }
 }

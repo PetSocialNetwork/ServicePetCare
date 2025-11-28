@@ -5,5 +5,8 @@
         public Guid Id { get; init; }
         public Guid ProfileId { get; set; }
         public Guid ServiceTypeId { get; set; }
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
+        public ServiceTypeResponse ServiceType { get; set; }
     }
 }

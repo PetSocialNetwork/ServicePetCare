@@ -25,6 +25,7 @@ namespace ServicePetCare.WebApi.Filters
             return context.Exception switch
             {
                 ServiceNotFoundException => ("Услуга не существует", StatusCodes.Status400BadRequest),
+                ServiceAlreadyExistsException => ("Услуга уже существует", StatusCodes.Status400BadRequest),
                 Exception => ("Неизвестная ошибка", StatusCodes.Status500InternalServerError),
                 _ => (null, 0)
             };

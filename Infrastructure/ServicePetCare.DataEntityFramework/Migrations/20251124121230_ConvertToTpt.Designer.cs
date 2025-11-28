@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ServicePetCare.DataEntityFramework;
@@ -11,9 +12,11 @@ using ServicePetCare.DataEntityFramework;
 namespace ServicePetCare.DataEntityFramework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124121230_ConvertToTpt")]
+    partial class ConvertToTpt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,29 +24,6 @@ namespace ServicePetCare.DataEntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalking", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("MaxDogs")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("ServiceId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("WalkDurationMinutes")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId")
-                        .IsUnique();
-
-                    b.ToTable("DogWalkingServices");
-                });
 
             modelBuilder.Entity("ServicePetCare.Domain.Entities.Service", b =>
                 {
@@ -67,7 +47,9 @@ namespace ServicePetCare.DataEntityFramework.Migrations
 
                     b.HasIndex("ServiceTypeId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("ServicePetCare.Domain.Entities.ServiceType", b =>
@@ -85,15 +67,11 @@ namespace ServicePetCare.DataEntityFramework.Migrations
                     b.ToTable("ServiceTypes");
                 });
 
-            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalking", b =>
+            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalkingService", b =>
                 {
-                    b.HasOne("ServicePetCare.Domain.Entities.Service", "Service")
-                        .WithOne("DogWalkingService")
-                        .HasForeignKey("ServicePetCare.Domain.Entities.DogWalking", "ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasBaseType("ServicePetCare.Domain.Entities.Service");
 
-                    b.Navigation("Service");
+                    b.ToTable("DogWalkingServices", (string)null);
                 });
 
             modelBuilder.Entity("ServicePetCare.Domain.Entities.Service", b =>
@@ -107,9 +85,12 @@ namespace ServicePetCare.DataEntityFramework.Migrations
                     b.Navigation("ServiceType");
                 });
 
-            modelBuilder.Entity("ServicePetCare.Domain.Entities.Service", b =>
+            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalkingService", b =>
                 {
-                    b.Navigation("DogWalkingService")
+                    b.HasOne("ServicePetCare.Domain.Entities.Service", null)
+                        .WithOne()
+                        .HasForeignKey("ServicePetCare.Domain.Entities.DogWalkingService", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

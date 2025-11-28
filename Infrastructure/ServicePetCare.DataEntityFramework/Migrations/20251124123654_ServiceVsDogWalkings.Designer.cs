@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ServicePetCare.DataEntityFramework;
@@ -11,9 +12,11 @@ using ServicePetCare.DataEntityFramework;
 namespace ServicePetCare.DataEntityFramework.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124123654_ServiceVsDogWalkings")]
+    partial class ServiceVsDogWalkings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,20 +25,14 @@ namespace ServicePetCare.DataEntityFramework.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalking", b =>
+            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalkingService", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int?>("MaxDogs")
-                        .HasColumnType("integer");
-
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uuid");
-
-                    b.Property<int?>("WalkDurationMinutes")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -85,11 +82,11 @@ namespace ServicePetCare.DataEntityFramework.Migrations
                     b.ToTable("ServiceTypes");
                 });
 
-            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalking", b =>
+            modelBuilder.Entity("ServicePetCare.Domain.Entities.DogWalkingService", b =>
                 {
                     b.HasOne("ServicePetCare.Domain.Entities.Service", "Service")
                         .WithOne("DogWalkingService")
-                        .HasForeignKey("ServicePetCare.Domain.Entities.DogWalking", "ServiceId")
+                        .HasForeignKey("ServicePetCare.Domain.Entities.DogWalkingService", "ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -12,9 +12,10 @@ namespace ServicePetCare.WebApi.Mappings
             CreateMap<AddServiceRequest, Service>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.ProfileId, opt => opt.MapFrom(src => src.ProfileId))
-               .ForMember(dest => dest.ServiceTypeId, opt => opt.MapFrom(src => src.ServiceTypeId));
+                .ForMember(dest => dest.ServiceTypeId, opt => opt.MapFrom(src => src.ServiceTypeId));
 
-            CreateMap<Service, ServiceResponse>();
+            CreateMap<Service, ServiceResponse>()
+                .ForMember(dest => dest.ServiceType, opt => opt.MapFrom(src => src.ServiceType));
             CreateMap<ServiceType, ServiceTypeResponse>();
         }
     }
