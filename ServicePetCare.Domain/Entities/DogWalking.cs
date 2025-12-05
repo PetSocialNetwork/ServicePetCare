@@ -2,7 +2,7 @@
 
 namespace ServicePetCare.Domain.Entities
 {
-    public class DogWalking : IEntity
+    public class DogWalking : ServiceBase, IEntity
     {
         public Guid Id { get; init; }
         public Guid ServiceId { get; set; }

@@ -62,6 +62,7 @@ namespace ServicePetCare.Domain.Services
 
             await _serviceRepository.Delete(service, cancellationToken);
         }
+
         public async Task<Service> GetServiceByIdAsync
          (Guid serviceId, CancellationToken cancellationToken)
         {

@@ -11,15 +11,19 @@ namespace ServicePetCare.WebApi.Controllers
     [ApiController]
     public class ServiceController : ControllerBase
     {
+        private readonly TypeService _typeService;
         private readonly PetCareService _petCareService;
         private readonly IMapper _mapper;
-        public ServiceController(PetCareService petCareService, 
+        public ServiceController(PetCareService petCareService,
+            TypeService typeService,
             IMapper mapper)
         {
             _petCareService = petCareService
                 ?? throw new ArgumentException(nameof(petCareService));
             _mapper = mapper
                 ?? throw new ArgumentNullException(nameof(mapper));
+            _typeService = typeService
+                ?? throw new ArgumentNullException(nameof(typeService));
         }
 
         /// <summary>
@@ -34,6 +38,8 @@ namespace ServicePetCare.WebApi.Controllers
             ([FromBody] AddServiceRequest request, CancellationToken cancellationToken)
         {
             var service = _mapper.Map<Service>(request);
+            var serviceType = await _typeService.GetServiceTypeByIdAsync(request.ServiceTypeId, cancellationToken);
+            service.ServiceType = serviceType;
             var pet = await _petCareService.AddServiceAsync(service, cancellationToken);     
             return _mapper.Map<ServiceResponse>(pet);
         }

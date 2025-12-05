@@ -37,7 +37,7 @@ namespace ServicePetCare.WebApi.Extensions
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddControllers(options =>
             {
-                options.Filters.Add<CentralizedExceptionHandlingFilter>();
+                //options.Filters.Add<CentralizedExceptionHandlingFilter>();
             });
 
             services.AddFluentValidationAutoValidation();
@@ -73,6 +73,7 @@ namespace ServicePetCare.WebApi.Extensions
             services.AddScoped<PetCareService>();
             services.AddScoped<TypeService>();
             services.AddScoped<DogWalkingService>();
+            services.AddScoped<DogWalkingFactory>();
         }
     }
 }
